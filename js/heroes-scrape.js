@@ -168,10 +168,10 @@ function generate_table () {
 
     $('<img/>')
       .attr ({
-        src:   'img/' + this.type + '.png',
-        alt:   this.type,
-        title: this.type,
-        class: 'icon',
+        'src':   'img/' + this.type + '.png',
+        'alt':   this.type,
+        'title': this.type,
+        'class': 'icon',
       })
       .appendTo (td_type);
 
@@ -193,10 +193,10 @@ function generate_table () {
         .append (
           $('<img/>')
             .attr ({
-              src:   'img/wikipedia.png',
-              alt:   'Wikipedia',
-              title: '“' + this.title + '” in Wikipedia',
-              class: 'icon',
+              'src':   'img/wikipedia.png',
+              'alt':   'Wikipedia',
+              'title': '“' + this.title + '” in Wikipedia',
+              'class': 'icon',
             })
         )
         .appendTo (td_misc);
