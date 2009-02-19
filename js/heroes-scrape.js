@@ -4,6 +4,10 @@ function debug (text) {
   $('<div/>').prependTo ($('#content')).text (text);
 }
 
+function ce (name) {
+  return $(document.createElement (name));
+}
+
 function HeroesScrapeError (message) {
   this.name = 'HeroesScrapeError';
   this.message = message;
@@ -150,7 +154,7 @@ function generate_table () {
   if (console) { console.time ('generate_table loop'); }
 
   $.each (list, function () {
-    var tr = $(document.createElement ('tr')).appendTo (tbody);
+    var tr = ce ('tr').appendTo (tbody);
 
     if (this.date == today) {
       tr.addClass ('today');
@@ -160,15 +164,15 @@ function generate_table () {
 
     tr.addClass (this.type);
 
-    var td_date  = $(document.createElement ('td')).addClass ('date').appendTo (tr),
-        td_type  = $(document.createElement ('td')).addClass ('type').appendTo (tr),
-        td_id    = $(document.createElement ('td')).addClass ('id').appendTo (tr),
-        td_title = $(document.createElement ('td')).addClass ('title').appendTo (tr),
-        td_misc  = $(document.createElement ('td')).addClass ('misc').appendTo (tr);
+    var td_date  = ce ('td').addClass ('date').appendTo (tr),
+        td_type  = ce ('td').addClass ('type').appendTo (tr),
+        td_id    = ce ('td').addClass ('id').appendTo (tr),
+        td_title = ce ('td').addClass ('title').appendTo (tr),
+        td_misc  = ce ('td').addClass ('misc').appendTo (tr);
 
     td_date.text (this.date);
 
-    $(document.createElement ('img'))
+    ce ('img')
       .attr ({
         'src':   'img/' + this.type + '.png',
         'alt':   this.type,
@@ -180,7 +184,7 @@ function generate_table () {
     td_id.text (this.id);
 
     if (this.uri) {
-      $(document.createElement ('a'))
+      ce ('a')
         .text (this.title)
         .attr ('href', this.uri)
         .appendTo (td_title);
@@ -190,10 +194,10 @@ function generate_table () {
     }
 
     if (this.wp_uri) {
-      $(document.createElement ('a'))
+      ce ('a')
         .attr ('href', this.wp_uri)
         .append (
-          $(document.createElement ('img'))
+          ce ('img')
             .attr ({
               'src':   'img/wikipedia.png',
               'alt':   'Wikipedia',
