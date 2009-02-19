@@ -151,69 +151,76 @@ function generate_table () {
     .append ($('<th class="title">Title</th>'))
     .append ($('<th class="misc"> </th>'))
 
-  if (console) { console.time ('generate_table loop'); }
-
-  $.each (list, function () {
-    var tr = ce ('tr').appendTo (tbody);
-
-    if (this.date == today) {
-      tr.addClass ('today');
-    } else if (this.date > today) {
-      tr.addClass ('upcoming');
-    }
-
-    tr.addClass (this.type);
-
-    var td_date  = ce ('td').addClass ('date').appendTo (tr),
-        td_type  = ce ('td').addClass ('type').appendTo (tr),
-        td_id    = ce ('td').addClass ('id').appendTo (tr),
-        td_title = ce ('td').addClass ('title').appendTo (tr),
-        td_misc  = ce ('td').addClass ('misc').appendTo (tr);
-
-    td_date.text (this.date);
-
-    ce ('img')
-      .attr ({
-        'src':   'img/' + this.type + '.png',
-        'alt':   this.type,
-        'title': this.type,
-        'class': 'icon',
-      })
-      .appendTo (td_type);
-
-    td_id.text (this.id);
-
-    if (this.uri) {
-      ce ('a')
-        .text (this.title)
-        .attr ('href', this.uri)
-        .appendTo (td_title);
-
-    } else {
-      td_title.text (this.title);
-    }
-
-    if (this.wp_uri) {
-      ce ('a')
-        .attr ('href', this.wp_uri)
-        .append (
-          ce ('img')
-            .attr ({
-              'src':   'img/wikipedia.png',
-              'alt':   'Wikipedia',
-              'title': '“' + this.title + '” in Wikipedia',
-              'class': 'icon',
-            })
-        )
-        .appendTo (td_misc);
-    }
-  });
-
-  if (console) { console.timeEnd ('generate_table loop'); }
-
   $('#heroes-table-container')
     .empty ()
     .append (table);
+
+  // Generate the table in chunks to avoid hogging the browser for seconds.
+
+  (function () {
+    for (var i = 0; i < 20; i++) {
+      var item = list.shift ();
+      if (typeof item == 'undefined') {
+        return;
+      }
+
+      var tr = ce ('tr').appendTo (tbody);
+
+      if (item.date == today) {
+        tr.addClass ('today');
+      } else if (item.date > today) {
+        tr.addClass ('upcoming');
+      }
+
+      tr.addClass (item.type);
+
+      var td_date  = ce ('td').addClass ('date').appendTo (tr),
+          td_type  = ce ('td').addClass ('type').appendTo (tr),
+          td_id    = ce ('td').addClass ('id').appendTo (tr),
+          td_title = ce ('td').addClass ('title').appendTo (tr),
+          td_misc  = ce ('td').addClass ('misc').appendTo (tr);
+
+      td_date.text (item.date);
+
+      ce ('img')
+        .attr ({
+          'src':   'img/' + item.type + '.png',
+          'alt':   item.type,
+          'title': item.type,
+          'class': 'icon',
+        })
+        .appendTo (td_type);
+
+      td_id.text (item.id);
+
+      if (item.uri) {
+        ce ('a')
+          .text (item.title)
+          .attr ('href', item.uri)
+          .appendTo (td_title);
+
+      } else {
+        td_title.text (item.title);
+      }
+
+      if (item.wp_uri) {
+        ce ('a')
+          .attr ('href', item.wp_uri)
+          .append (
+            ce ('img')
+              .attr ({
+                'src':   'img/wikipedia.png',
+                'alt':   'Wikipedia',
+                'title': '“' + item.title + '” in Wikipedia',
+                'class': 'icon',
+              })
+          )
+          .appendTo (td_misc);
+      }
+    }
+
+    setTimeout (arguments.callee, 1);
+  }) ();
 }
 
 var month_map = {
