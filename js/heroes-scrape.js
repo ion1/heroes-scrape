@@ -148,7 +148,7 @@ function generate_table () {
     .append ($('<th class="misc"> </th>'))
 
   $.each (list, function () {
-    var tr = $('<tr/>').appendTo (tbody);
+    var tr = $(document.createElement ('tr')).appendTo (tbody);
 
     if (this.date == today) {
       tr.addClass ('today');
@@ -158,15 +158,15 @@ function generate_table () {
 
     tr.addClass (this.type);
 
-    var td_date  = $('<td class="date"/>').appendTo (tr),
-        td_type  = $('<td class="type"/>').appendTo (tr),
-        td_id    = $('<td class="id"/>').appendTo (tr),
-        td_title = $('<td class="title"/>').appendTo (tr),
-        td_misc  = $('<td class="misc"/>').appendTo (tr);
+    var td_date  = $(document.createElement ('td')).addClass ('date').appendTo (tr),
+        td_type  = $(document.createElement ('td')).addClass ('type').appendTo (tr),
+        td_id    = $(document.createElement ('td')).addClass ('id').appendTo (tr),
+        td_title = $(document.createElement ('td')).addClass ('title').appendTo (tr),
+        td_misc  = $(document.createElement ('td')).addClass ('misc').appendTo (tr);
 
     td_date.text (this.date);
 
-    $('<img/>')
+    $(document.createElement ('img'))
       .attr ({
         'src':   'img/' + this.type + '.png',
         'alt':   this.type,
@@ -178,7 +178,7 @@ function generate_table () {
     td_id.text (this.id);
 
     if (this.uri) {
-      $('<a/>')
+      $(document.createElement ('a'))
         .text (this.title)
         .attr ('href', this.uri)
         .appendTo (td_title);
@@ -188,10 +188,10 @@ function generate_table () {
     }
 
     if (this.wp_uri) {
-      $('<a/>')
+      $(document.createElement ('a'))
         .attr ('href', this.wp_uri)
         .append (
-          $('<img/>')
+          $(document.createElement ('img'))
             .attr ({
               'src':   'img/wikipedia.png',
               'alt':   'Wikipedia',
