@@ -147,6 +147,8 @@ function generate_table () {
     .append ($('<th class="title">Title</th>'))
     .append ($('<th class="misc"> </th>'))
 
+  if (console) { console.time ('generate_table loop'); }
+
   $.each (list, function () {
     var tr = $(document.createElement ('tr')).appendTo (tbody);
 
@@ -202,6 +204,8 @@ function generate_table () {
         .appendTo (td_misc);
     }
   });
+
+  if (console) { console.timeEnd ('generate_table loop'); }
 
   $('#heroes-table-container')
     .empty ()
