@@ -152,8 +152,7 @@ function generate_table () {
     .append ($('<th class="misc"> </th>'))
 
   $('#heroes-table-container')
-    .empty ()
-    .append (table);
+    .prepend (table);
 
   // Generate the table in chunks to avoid hogging the browser for seconds.
 
@@ -161,6 +160,7 @@ function generate_table () {
     for (var i = 0; i < 20; i++) {
       var item = list.shift ();
       if (typeof item == 'undefined') {
+        $('#heroes-table-loading').remove ();
         clearInterval (interval);
         return;
       }
@@ -307,7 +307,9 @@ function scrape_comics (tree) {
 }
 
 $(function () {
-  $('#heroes-table-container').text ('Loading...');
+  $('#heroes-table-container')
+    .empty ()
+    .append ($('<div id="heroes-table-loading">Loading...</div>'));
 
   get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
   get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
