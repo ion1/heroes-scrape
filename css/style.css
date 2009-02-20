@@ -21,27 +21,21 @@ thead tr { border-bottom: 1px solid #ada; }
 #heroes-table td.id    { text-align: right;  white-space: nowrap; }
 #heroes-table td.misc  { text-align: center; }
 
-tr.upcoming { color: #aaa; }
-tr.today    { color: #a00; font-weight: bold; }
-
-th.sort     { color: #00f; }
-
-img.icon { width: 22px; height: 22px; vertical-align: middle; border: none; }
-
-tr.upcoming img.icon {
+tr.upcoming {
   opacity: .33;
   /* Evil invalid CSS */
   -moz-opacity: .33;
   -webkit-opacity: .33;
   filter: alpha(opacity=33);
 }
-tr.today img.icon {
-  opacity: 1;
-  /* Evil invalid CSS */
-  -moz-opacity: 1;
-  -webkit-opacity: 1;
-  filter: alpha(opacity=100);
+tr.today {
+  color: #a00;
+  font-weight: bold;
 }
+
+th.sort     { color: #00f; }
+
+img.icon { width: 22px; height: 22px; vertical-align: middle; border: none; }
 
 .box {
   color: #555;
