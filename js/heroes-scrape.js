@@ -266,7 +266,7 @@ function scrape_episodes (tree) {
     // The first episode of a season.
     var first_ep = null;
 
-    $(this).next ('table').find ('tr').each (function () {
+    $(this).next ('table.wikitable').find ('tr').each (function () {
       var ep = $(this).find ('td:eq(0)').text ();
 
       if (! /^[0-9]+$/.exec (ep)) {
@@ -295,7 +295,7 @@ function scrape_episodes (tree) {
 function scrape_comics (tree) {
   var bonus = 0;
 
-  $(tree).find ('table tr').each (function () {
+  $(tree).find ('table.wikitable tr').each (function () {
     var id = $(this).find ('td:eq(0)').text ();
 
     if (/^[0-9]+$/.exec (id)) {
