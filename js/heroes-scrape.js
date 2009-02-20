@@ -314,17 +314,22 @@ function scrape_episodes (tree) {
         first_ep = ep;
       }
 
-      var ep_real = 1 + ep - first_ep,
-          id      = id_prefix + pad (ep_real, 2),
-          title   = title_prefix + $(this).find ('td:eq(1) b').text (),
-          wp_uri  = $(this).find ('td:eq(1) b a').attr ('href'),
-          date    = parse_date ($(this).find ('td:eq('+date_col+')').text ());
+      try {
+        var ep_real = 1 + ep - first_ep,
+            id      = id_prefix + pad (ep_real, 2),
+            title   = title_prefix + $(this).find ('td:eq(1) b').text (),
+            wp_uri  = $(this).find ('td:eq(1) b a').attr ('href'),
+            date    = parse_date ($(this).find ('td:eq('+date_col+')').text ());
 
-      if (wp_uri) {
-        wp_uri = 'http://en.wikipedia.org' + wp_uri;
+        if (wp_uri) {
+          wp_uri = 'http://en.wikipedia.org' + wp_uri;
+        }
+
+        add_item (type, id, title, date, { wp_uri: wp_uri });
+
+      } catch (e) {
+        if (console && console.error) { console.error (e); }
       }
-
-      add_item (type, id, title, date, { wp_uri: wp_uri });
     });
   });
 
@@ -353,7 +358,12 @@ function scrape_comics (tree) {
         uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
         date  = $(this).find ('td:eq(2)').text ();
 
-    add_item ('comic', id, title, date, { uri: uri });
+    try {
+      add_item ('comic', id, title, date, { uri: uri });
+
+    } catch (e) {
+      if (console && console.error) { console.error (e); }
+    }
   });
 
   scraped_comics = true;
