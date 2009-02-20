@@ -15,7 +15,7 @@ function HeroesScrapeError (message) {
 
 HeroesScrapeError.prototype.toString = function () {
   return this.name + ': ' + this.message;
-}
+};
 
 function pad (num, len) {
   var res = '' + num;
@@ -29,30 +29,30 @@ function pad (num, len) {
 
 // Progress indicator.
 $(function () {
-  $('body')
-    .ajaxStart (function () { $(this).css ('cursor', 'progress'); })
-    .ajaxStop  (function () { $(this).css ('cursor', null);       });
+  $('body').
+    ajaxStart (function () { $(this).css ('cursor', 'progress'); }).
+    ajaxStop  (function () { $(this).css ('cursor', null);       });
 
-  $('<div id="loading-indicator">Loading...</div>')
-    .css ({
+  $('<div id="loading-indicator">Loading...</div>').
+    css ({
       'position':    'absolute',
       'top':         0,
       'right':       0,
       'background':  'yellow',
       'color':       'black',
-      'font-weight': 'bold',
-    })
-    .hide ()
-    .prependTo ($('body'))
-    .ajaxStart (function () { $(this).show (); })
-    .ajaxStop  (function () { $(this).hide (); });
+      'font-weight': 'bold'
+    }).
+    hide ().
+    prependTo ($('body')).
+    ajaxStart (function () { $(this).show (); }).
+    ajaxStop  (function () { $(this).hide (); });
 });
 
 // The scraping.
 
 function get_wikipedia_page (title, callback) {
-  var uri = 'http://en.wikipedia.org/w/api.php?action=parse&page='
-            + title + '&prop=text&format=json&callback=?'
+  var uri = 'http://en.wikipedia.org/w/api.php?action=parse&page=' +
+            title + '&prop=text&format=json&callback=?';
 
   $.getJSON (uri, function (data) {
     var tree = $('<div/>').html (data.parse.text['*'])[0];
@@ -65,12 +65,12 @@ var scraped_episodes = false,
     list             = [];
 
 function add_episode (season, episode, title, wp_uri, date) {
-  if (typeof season != 'number'
-      || typeof episode != 'number'
-      || typeof title != 'string'
-      || typeof wp_uri != 'string'
-      || typeof date != 'string'
-      || ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
+  if (typeof season  !== 'number' ||
+      typeof episode !== 'number' ||
+      typeof title   !== 'string' ||
+      typeof wp_uri  !== 'string' ||
+      typeof date    !== 'string' ||
+      ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
     throw new HeroesScrapeError ('add_episode: Invalid parameters');
   }
 
@@ -81,16 +81,16 @@ function add_episode (season, episode, title, wp_uri, date) {
     id:      '' + season + 'x' + pad (episode, 2),
     title:   title,
     wp_uri:  wp_uri,
-    date:    date,
+    date:    date
   });
 }
 
 function add_comic (id, title, uri, date) {
-  if (typeof id != 'number'
-      || typeof title != 'string'
-      || typeof uri != 'string'
-      || typeof date != 'string'
-      || ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
+  if (typeof id    !== 'number' ||
+      typeof title !== 'string' ||
+      typeof uri   !== 'string' ||
+      typeof date  !== 'string' ||
+      ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
     throw new HeroesScrapeError ('add_comic: Invalid parameters');
   }
 
@@ -99,19 +99,19 @@ function add_comic (id, title, uri, date) {
     id:    id,
     title: title,
     uri:   uri,
-    date:  date,
+    date:  date
   });
 }
 
 function sort_list () {
   list.sort (function (a, b) {
-    if (a.date != b.date) {
+    if (a.date !== b.date) {
       return (a.date < b.date) ? -1 : 1;
 
-    } else if (a.type != b.type) {
-      return (a.type == 'episode') ? -1 : 1;
+    } else if (a.type !== b.type) {
+      return (a.type === 'episode') ? -1 : 1;
 
-    } else if (a.id != b.id) {
+    } else if (a.id !== b.id) {
       return (a.id < b.id) ? -1 : 1;
 
     } else {
@@ -123,11 +123,11 @@ function sort_list () {
 }
 
 function now () {
-  var date = new Date;
+  var date = new Date ();
 
-  return pad (date.getFullYear (), 4)
-    + '-' + pad (date.getMonth () + 1, 2)
-    + '-' + pad (date.getDate (), 2)
+  return pad (date.getFullYear (), 4) +
+         '-' + pad (date.getMonth () + 1, 2) +
+         '-' + pad (date.getDate (), 2);
 }
 
 function generate_table () {
@@ -143,23 +143,23 @@ function generate_table () {
       thead = $('<thead/>').appendTo (table),
       tbody = $('<tbody/>').appendTo (table);
 
-  $('<tr/>')
-    .appendTo (thead)
-    .append ($('<th class="date">Date</th>'))
-    .append ($('<th class="type">Type</th>'))
-    .append ($('<th class="id">ID</th>'))
-    .append ($('<th class="title">Title</th>'))
-    .append ($('<th class="misc"> </th>'))
+  $('<tr/>').
+    appendTo (thead).
+    append ($('<th class="date">Date</th>')).
+    append ($('<th class="type">Type</th>')).
+    append ($('<th class="id">ID</th>')).
+    append ($('<th class="title">Title</th>')).
+    append ($('<th class="misc"> </th>'));
 
-  $('#heroes-table-container')
-    .prepend (table);
+  $('#heroes-table-container').
+    prepend (table);
 
   // Generate the table in chunks to avoid hogging the browser for seconds.
 
   var interval = setInterval (function () {
     for (var i = 0; i < 20; i++) {
       var item = list.shift ();
-      if (typeof item == 'undefined') {
+      if (typeof item === 'undefined') {
         $('#heroes-table-loading').remove ();
         clearInterval (interval);
         return;
@@ -167,7 +167,7 @@ function generate_table () {
 
       var tr = ce ('tr').appendTo (tbody);
 
-      if (item.date == today) {
+      if (item.date === today) {
         tr.addClass ('today');
       } else if (item.date > today) {
         tr.addClass ('upcoming');
@@ -183,40 +183,40 @@ function generate_table () {
 
       td_date.text (item.date);
 
-      ce ('img')
-        .attr ({
+      ce ('img').
+        attr ({
           'src':   'img/' + item.type + '.png',
           'alt':   item.type,
           'title': item.type,
-          'class': 'icon',
-        })
-        .appendTo (td_type);
+          'class': 'icon'
+        }).
+        appendTo (td_type);
 
       td_id.text (item.id);
 
       if (item.uri) {
-        ce ('a')
-          .text (item.title)
-          .attr ('href', item.uri)
-          .appendTo (td_title);
+        ce ('a').
+          text (item.title).
+          attr ('href', item.uri).
+          appendTo (td_title);
 
       } else {
         td_title.text (item.title);
       }
 
       if (item.wp_uri) {
-        ce ('a')
-          .attr ('href', item.wp_uri)
-          .append (
-            ce ('img')
-              .attr ({
+        ce ('a').
+          attr ('href', item.wp_uri).
+          append (
+            ce ('img').
+              attr ({
                 'src':   'img/wikipedia.png',
                 'alt':   'Wikipedia',
-                'title': '“' + item.title + '” in Wikipedia',
-                'class': 'icon',
+                'title': "\u201c" + item.title + "\u201d in Wikipedia",
+                'class': 'icon'
               })
-          )
-          .appendTo (td_misc);
+          ).
+          appendTo (td_misc);
       }
     }
   }, 1);
@@ -234,7 +234,7 @@ var month_map = {
   september:  9,
   october:   10,
   november:  11,
-  december:  12,
+  december:  12
 };
 
 function parse_date (string) {
@@ -273,8 +273,8 @@ function scrape_episodes (tree) {
 
           var ep_real = 1 + ep - first_ep,
               title   = $(this).find ('td:eq(1) b').text (),
-              wp_uri  = 'http://en.wikipedia.org'
-                        + $(this).find ('td:eq(1) b a').attr ('href');
+              wp_uri  = 'http://en.wikipedia.org' +
+                        $(this).find ('td:eq(1) b a').attr ('href'),
               date    = parse_date ($(this).find ('td:eq(5)').text ());
 
           add_episode (season, ep_real, title, wp_uri, date);
@@ -307,9 +307,9 @@ function scrape_comics (tree) {
 }
 
 $(function () {
-  $('#heroes-table-container')
-    .empty ()
-    .append ($('<div id="heroes-table-loading">Loading...</div>'));
+  $('#heroes-table-container').
+    empty ().
+    append ($('<div id="heroes-table-loading">Loading...</div>'));
 
   get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
   get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
