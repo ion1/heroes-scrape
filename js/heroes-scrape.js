@@ -65,40 +65,30 @@ var scraped_episodes = false,
     scraped_comics   = false,
     list             = [];
 
-function add_episode (id, title, wp_uri, date) {
-  if (typeof id      !== 'string' ||
+function add_item (type, id, title, date, other) {
+  if (! /^(?:episode|webisode|comic)$/.exec (type) ||
+      typeof id      !== 'string' ||
       typeof title   !== 'string' ||
       typeof date    !== 'string' ||
       ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
-    throw new HeroesScrapeError ('add_episode: Invalid parameters');
+    throw new HeroesScrapeError ('add_item: Invalid parameters');
   }
 
-  list.push ({
-    type:    'episode',
-    id:      id,
-    title:   title,
-    wp_uri:  wp_uri,
-    date:    date
-  });
-}
-
-function add_comic (id, title, uri, date) {
-  if (typeof id    !== 'string' ||
-      typeof title !== 'string' ||
-      typeof uri   !== 'string' ||
-      typeof date  !== 'string' ||
-      ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
-    throw new HeroesScrapeError ('add_comic: Invalid parameters');
-  }
-
-  list.push ({
-    type:  'comic',
+  var item = {
+    type:  type,
     id:    id,
     title: title,
-    uri:   uri,
     date:  date
-  });
+  };
+  $.extend (item, other);
+  list.push (item);
 }
+
+var sort_type_map = {
+  'episode':  0,
+  'webisode': 1,
+  'comic':    2
+};
 
 function sort_list () {
   list.sort (function (a, b) {
@@ -106,7 +96,7 @@ function sort_list () {
       return (a.date < b.date) ? -1 : 1;
 
     } else if (a.type !== b.type) {
-      return (a.type === 'episode') ? -1 : 1;
+      return (sort_type_map[a.type] < sort_type_map[b.type]) ? -1 : 1;
 
     } else if (a.id !== b.id) {
       return (a.id < b.id) ? -1 : 1;
@@ -261,17 +251,20 @@ function scrape_episodes (tree) {
   $(tree).find ('h3').each (function () {
     var text = $(this).find ('.mw-headline').text ();
 
-    var id_prefix,
+    var type,
+        id_prefix,
         title_prefix,
         date_col;
 
     var match = /^Season ([0-9]+)/.exec (text);
     if (match) {
+      type         = 'episode';
       id_prefix    = match[1] + 'x'
       title_prefix = '';
       date_col     = 5;
 
     } else if (webisode_id_map[text]) {
+      type         = 'webisode';
       id_prefix    = webisode_id_map[text];
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
@@ -305,7 +298,7 @@ function scrape_episodes (tree) {
         wp_uri = 'http://en.wikipedia.org' + wp_uri;
       }
 
-      add_episode (id, title, wp_uri, date);
+      add_item (type, id, title, date, { wp_uri: wp_uri });
     });
   });
 
@@ -334,7 +327,7 @@ function scrape_comics (tree) {
         uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
         date  = $(this).find ('td:eq(2)').text ();
 
-    add_comic (id, title, uri, date);
+    add_item ('comic', id, title, date, { uri: uri });
   });
 
   scraped_comics = true;

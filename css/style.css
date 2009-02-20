@@ -9,9 +9,12 @@ thead tr { border-bottom: 1px solid #ada; }
 #heroes-table th.title { width:  66%; }
 #heroes-table th.misc  { width:   5%; }
 
-#heroes-table th       { background-color: #bfb; }
-#heroes-table .comic   { background-color: #dfd; }
-#heroes-table .episode { background-color: #fff; }
+#heroes-table th        { background-color: #bfb; }
+#heroes-table .episode  { background-color: #fff; }
+#heroes-table .webisode { background-color: #fff; }
+#heroes-table .comic    { background-color: #dfd; }
+
+#heroes-table .webisode td.title { font-style: italic; }
 
 #heroes-table td.date  { text-align: center; white-space: nowrap; }
 #heroes-table td.type  { text-align: center; }
