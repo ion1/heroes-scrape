@@ -1,6 +1,14 @@
 th, td   { padding: 0 0.5em; border: none; }
 thead tr { border-bottom: 1px solid #ada; }
 
+/* The initial widths are approximations of the measured final widths. */
+#heroes-table          { width: 100%; }
+#heroes-table th.date  { width:  16%; }
+#heroes-table th.type  { width:   7%; }
+#heroes-table th.id    { width:   6%; }
+#heroes-table th.title { width:  66%; }
+#heroes-table th.misc  { width:   5%; }
+
 #heroes-table th       { background-color: #bfb; }
 #heroes-table .comic   { background-color: #dfd; }
 #heroes-table .episode { background-color: #fff; }
