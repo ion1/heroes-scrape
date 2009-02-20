@@ -112,7 +112,11 @@ function sort_list () {
 }
 
 function now () {
-  var date = new Date ();
+  var date = (function (offset) {
+    var date = new Date (),
+        utc  = date.getTime () + 60*1000 * date.getTimezoneOffset ();
+    return new Date (utc + 60*60*1000 * offset);
+  }) (-5);
 
   return pad (date.getFullYear (), 4) +
          '-' + pad (date.getMonth () + 1, 2) +
