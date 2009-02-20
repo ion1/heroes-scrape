@@ -257,31 +257,35 @@ function scrape_episodes (tree) {
     var text = $(this).find ('.mw-headline').text (),
         m    = /^Season ([0-9]+)/.exec (text);
 
-    if (m) {
-      var season = + m[1];
-
-      // The first episode of a season.
-      var first_ep = null;
-
-      $(this).next ('table').find ('tr').each (function () {
-        var ep = $(this).find ('td:eq(0)').text ();
-
-        if (/^[0-9]+$/.exec (ep)) {
-          ep = + ep;
-          if (first_ep === null) {
-            first_ep = ep;
-          }
-
-          var ep_real = 1 + ep - first_ep,
-              title   = $(this).find ('td:eq(1) b').text (),
-              wp_uri  = 'http://en.wikipedia.org' +
-                        $(this).find ('td:eq(1) b a').attr ('href'),
-              date    = parse_date ($(this).find ('td:eq(5)').text ());
-
-          add_episode (season, ep_real, title, wp_uri, date);
-        }
-      });
+    if (! m) {
+      return;
     }
+
+    var season = + m[1];
+
+    // The first episode of a season.
+    var first_ep = null;
+
+    $(this).next ('table').find ('tr').each (function () {
+      var ep = $(this).find ('td:eq(0)').text ();
+
+      if (! /^[0-9]+$/.exec (ep)) {
+        return;
+      }
+
+      ep = + ep;
+      if (first_ep === null) {
+        first_ep = ep;
+      }
+
+      var ep_real = 1 + ep - first_ep,
+          title   = $(this).find ('td:eq(1) b').text (),
+          wp_uri  = 'http://en.wikipedia.org' +
+                    $(this).find ('td:eq(1) b a').attr ('href'),
+          date    = parse_date ($(this).find ('td:eq(5)').text ());
+
+      add_episode (season, ep_real, title, wp_uri, date);
+    });
   });
 
   scraped_episodes = true;
@@ -292,15 +296,17 @@ function scrape_comics (tree) {
   $(tree).find ('table tr').each (function () {
     var id = $(this).find ('td:eq(0)').text ();
 
-    if (/^[0-9]+$/.exec (id)) {
-      id = + id;
-
-      var title = $(this).find ('td:eq(1) a:first').text (),
-          uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
-          date  = $(this).find ('td:eq(2)').text ();
-
-      add_comic (id, title, uri, date);
+    if (! /^[0-9]+$/.exec (id)) {
+      return;
     }
+
+    id = + id;
+
+    var title = $(this).find ('td:eq(1) a:first').text (),
+        uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
+        date  = $(this).find ('td:eq(2)').text ();
+
+    add_comic (id, title, uri, date);
   });
 
   scraped_comics = true;
