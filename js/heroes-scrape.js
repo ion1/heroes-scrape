@@ -68,7 +68,6 @@ var scraped_episodes = false,
 function add_episode (id, title, wp_uri, date) {
   if (typeof id      !== 'string' ||
       typeof title   !== 'string' ||
-      typeof wp_uri  !== 'string' ||
       typeof date    !== 'string' ||
       ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
     throw new HeroesScrapeError ('add_episode: Invalid parameters');
@@ -251,14 +250,41 @@ function parse_date (string) {
 
 function scrape_episodes (tree) {
   $(tree).find ('h3').each (function () {
-    var text = $(this).find ('.mw-headline').text (),
-        m    = /^Season ([0-9]+)/.exec (text);
+    var text = $(this).find ('.mw-headline').text ();
 
-    if (! m) {
+    var id_prefix,
+        title_prefix,
+        date_col;
+
+    var match = /^Season ([0-9]+)/.exec (text);
+    if (match) {
+      id_prefix    = match[1] + 'x'
+      title_prefix = '';
+      date_col     = 5;
+
+    } else if (/^Going Postal$/.exec (text)) {
+      id_prefix    = 'GP';
+      title_prefix = text + ' \u2013 ';
+      date_col     = 4;
+
+    } else if (/^Heroes: Destiny$/.exec (text)) {
+      id_prefix    = 'HD';
+      title_prefix = text + ' \u2013 ';
+      date_col     = 4;
+
+    } else if (/^The Recruit$/.exec (text)) {
+      id_prefix    = 'TR';
+      title_prefix = text + ' \u2013 ';
+      date_col     = 4;
+
+    } else if (/^Hard Knox$/.exec (text)) {
+      id_prefix    = 'HK';
+      title_prefix = text + ' \u2013 ';
+      date_col     = 4;
+
+    } else {
       return;
     }
-
-    var season = + m[1];
 
     // The first episode of a season.
     var first_ep = null;
@@ -276,11 +302,14 @@ function scrape_episodes (tree) {
       }
 
       var ep_real = 1 + ep - first_ep,
-          id      = season + 'x' + pad (ep_real, 2),
-          title   = $(this).find ('td:eq(1) b').text (),
-          wp_uri  = 'http://en.wikipedia.org' +
-                    $(this).find ('td:eq(1) b a').attr ('href'),
-          date    = parse_date ($(this).find ('td:eq(5)').text ());
+          id      = id_prefix + pad (ep_real, 2),
+          title   = title_prefix + $(this).find ('td:eq(1) b').text (),
+          wp_uri  = $(this).find ('td:eq(1) b a').attr ('href'),
+          date    = parse_date ($(this).find ('td:eq('+date_col+')').text ());
+
+      if (wp_uri) {
+        wp_uri = 'http://en.wikipedia.org' + wp_uri;
+      }
 
       add_episode (id, title, wp_uri, date);
     });
