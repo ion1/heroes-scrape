@@ -63,6 +63,8 @@ function get_wikipedia_page (title, callback) {
 
 var scraped_episodes = false,
     scraped_comics   = false,
+    document_ready   = false,
+    generated_table  = false,
     list             = [];
 
 function add_item (type, id, title, date, other) {
@@ -118,9 +120,14 @@ function now () {
 }
 
 function generate_table () {
-  if (! scraped_episodes || ! scraped_comics) {
+  if (! scraped_episodes ||
+      ! scraped_comics   ||
+      ! document_ready   ||
+      generated_table) {
     return;
   }
+
+  generated_table = true;
 
   sort_list ();
 
@@ -334,13 +341,17 @@ function scrape_comics (tree) {
   generate_table ();
 }
 
+get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
+get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
+
 $(function () {
   $('#heroes-table-container').
     empty ().
     append ($('<div id="heroes-table-loading">Loading...</div>'));
 
-  get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
-  get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
+  document_ready = true;
+
+  generate_table ();
 });
 
 }) (jQuery);
