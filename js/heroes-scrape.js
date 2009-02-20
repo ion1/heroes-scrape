@@ -248,6 +248,15 @@ function parse_date (string) {
   return pad (year, 4) + '-' + pad (month, 2) + '-' + pad (day, 2);
 }
 
+var webisode_id_map = {
+  'Going Postal':    'gp',
+  'Heroes: Destiny': 'hd',
+  'The Recruit':     'tr',
+  'Hard Knox':       'hk'
+};
+
+var webisode_re = /^(?:Going Postal|Heroes: Destiny|The Recruit|Hard Knox)$/;
+
 function scrape_episodes (tree) {
   $(tree).find ('h3').each (function () {
     var text = $(this).find ('.mw-headline').text ();
@@ -262,23 +271,8 @@ function scrape_episodes (tree) {
       title_prefix = '';
       date_col     = 5;
 
-    } else if (/^Going Postal$/.exec (text)) {
-      id_prefix    = 'gp';
-      title_prefix = text + ' \u2013 ';
-      date_col     = 4;
-
-    } else if (/^Heroes: Destiny$/.exec (text)) {
-      id_prefix    = 'hd';
-      title_prefix = text + ' \u2013 ';
-      date_col     = 4;
-
-    } else if (/^The Recruit$/.exec (text)) {
-      id_prefix    = 'tr';
-      title_prefix = text + ' \u2013 ';
-      date_col     = 4;
-
-    } else if (/^Hard Knox$/.exec (text)) {
-      id_prefix    = 'hk';
+    } else if (webisode_id_map[text]) {
+      id_prefix    = webisode_id_map[text];
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
 
