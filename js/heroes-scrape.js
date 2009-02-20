@@ -263,22 +263,22 @@ function scrape_episodes (tree) {
       date_col     = 5;
 
     } else if (/^Going Postal$/.exec (text)) {
-      id_prefix    = 'GP';
+      id_prefix    = 'gp';
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
 
     } else if (/^Heroes: Destiny$/.exec (text)) {
-      id_prefix    = 'HD';
+      id_prefix    = 'hd';
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
 
     } else if (/^The Recruit$/.exec (text)) {
-      id_prefix    = 'TR';
+      id_prefix    = 'tr';
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
 
     } else if (/^Hard Knox$/.exec (text)) {
-      id_prefix    = 'HK';
+      id_prefix    = 'hk';
       title_prefix = text + ' \u2013 ';
       date_col     = 4;
 
