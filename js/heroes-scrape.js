@@ -285,7 +285,7 @@ function scrape_episodes (tree) {
     var match = /^Season ([0-9]+)/.exec (text);
     if (match) {
       type         = 'episode';
-      id_prefix    = match[1] + 'x'
+      id_prefix    = match[1] + 'x';
       title_prefix = '';
       date_col     = 5;
 
