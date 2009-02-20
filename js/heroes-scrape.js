@@ -157,10 +157,11 @@ function generate_table () {
 
   // Generate the table in chunks to avoid hogging the browser for seconds.
 
-  (function () {
+  var interval = setInterval (function () {
     for (var i = 0; i < 20; i++) {
       var item = list.shift ();
       if (typeof item == 'undefined') {
+        clearInterval (interval);
         return;
       }
 
@@ -218,9 +219,7 @@ function generate_table () {
           .appendTo (td_misc);
       }
     }
-
-    setTimeout (arguments.callee, 1);
-  }) ();
+  }, 1);
 }
 
 var month_map = {
