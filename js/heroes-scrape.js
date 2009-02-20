@@ -65,9 +65,8 @@ var scraped_episodes = false,
     scraped_comics   = false,
     list             = [];
 
-function add_episode (season, episode, title, wp_uri, date) {
-  if (typeof season  !== 'number' ||
-      typeof episode !== 'number' ||
+function add_episode (id, title, wp_uri, date) {
+  if (typeof id      !== 'string' ||
       typeof title   !== 'string' ||
       typeof wp_uri  !== 'string' ||
       typeof date    !== 'string' ||
@@ -77,9 +76,7 @@ function add_episode (season, episode, title, wp_uri, date) {
 
   list.push ({
     type:    'episode',
-    season:  season,
-    episode: episode,
-    id:      '' + season + 'x' + pad (episode, 2),
+    id:      id,
     title:   title,
     wp_uri:  wp_uri,
     date:    date
@@ -279,12 +276,13 @@ function scrape_episodes (tree) {
       }
 
       var ep_real = 1 + ep - first_ep,
+          id      = season + 'x' + pad (ep_real, 2),
           title   = $(this).find ('td:eq(1) b').text (),
           wp_uri  = 'http://en.wikipedia.org' +
                     $(this).find ('td:eq(1) b a').attr ('href'),
           date    = parse_date ($(this).find ('td:eq(5)').text ());
 
-      add_episode (season, ep_real, title, wp_uri, date);
+      add_episode (id, title, wp_uri, date);
     });
   });
 
