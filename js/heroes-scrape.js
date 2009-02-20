@@ -87,7 +87,7 @@ function add_episode (season, episode, title, wp_uri, date) {
 }
 
 function add_comic (id, title, uri, date) {
-  if (typeof id    !== 'number' ||
+  if (typeof id    !== 'string' ||
       typeof title !== 'string' ||
       typeof uri   !== 'string' ||
       typeof date  !== 'string' ||
@@ -293,14 +293,21 @@ function scrape_episodes (tree) {
 }
 
 function scrape_comics (tree) {
+  var bonus = 0;
+
   $(tree).find ('table tr').each (function () {
     var id = $(this).find ('td:eq(0)').text ();
 
-    if (! /^[0-9]+$/.exec (id)) {
+    if (/^[0-9]+$/.exec (id)) {
+      // Proceed.
+
+    } else if (/^(?:Bonus|Interactive Novel)/.exec (id)) {
+      bonus++;
+      id = 'b' + bonus;
+
+    } else {
       return;
     }
-
-    id = + id;
 
     var title = $(this).find ('td:eq(1) a:first').text (),
         uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
