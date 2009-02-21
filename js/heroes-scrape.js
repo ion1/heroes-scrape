@@ -78,8 +78,8 @@ function get_wikipedia_page (title, callback) {
 
 var scraped_episodes = false,
     scraped_comics   = false,
-    document_ready   = false,
-    generated_table  = false,
+    table            = $('<table id="heroes-table"/>'),
+    table_ready      = false,
     list             = [];
 
 function add_item (type, id, title, date, other) {
@@ -139,21 +139,15 @@ function now () {
 }
 
 function generate_table () {
-  if (! scraped_episodes ||
-      ! scraped_comics   ||
-      ! document_ready   ||
-      generated_table) {
+  if (! scraped_episodes || ! scraped_comics) {
     return;
   }
-
-  generated_table = true;
 
   sort_list ();
 
   var today = now ();
 
-  var table = $('<table id="heroes-table"/>'),
-      thead = $('<thead/>').appendTo (table),
+  var thead = $('<thead/>').appendTo (table),
       tbody = $('<tbody/>').appendTo (table);
 
   $('<tr/>').
@@ -164,16 +158,14 @@ function generate_table () {
     append ($('<th class="title">Title</th>')).
     append ($('<th class="misc"> </th>'));
 
-  $('#heroes-table-container').
-    prepend (table);
-
   // Generate the table in chunks to avoid hogging the browser for seconds.
 
   var interval = setInterval (function () {
     for (var i = 0; i < 20; i++) {
       var item = list.shift ();
       if (typeof item === 'undefined') {
-        $('#heroes-table-loading').remove ();
+        table_ready = true;
+        if ($.isReady) { $('#heroes-table-loading').remove (); }
         clearInterval (interval);
         return;
       }
@@ -376,11 +368,10 @@ get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
 $(function () {
   $('#heroes-table-container').
     empty ().
+    append (table).
     append ($('<div id="heroes-table-loading">Loading...</div>'));
 
-  document_ready = true;
-
-  generate_table ();
+  if (table_ready) { $('#heroes-table-loading').remove (); }
 });
 
 }) (jQuery);
