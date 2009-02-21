@@ -48,7 +48,9 @@ function get_wikipedia_page (title, callback) {
             title + '&prop=text&format=json&callback=?';
 
   $.getJSON (uri, function (data) {
-    var tree = $('<div/>').html (data.parse.text['*'])[0];
+    var content = data.parse.text['*'].
+                  replace (/<(?:embed|iframe|img|input|object)[^>]*>/gi, '');
+    var tree = $('<div/>').html (content)[0];
     callback (tree);
   });
 }
