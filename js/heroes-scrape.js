@@ -43,29 +43,6 @@ function pad (num, len) {
   return res;
 }
 
-// Progress indicator.
-$(function () {
-  $('body').
-    ajaxStart (function () { $(this).css ('cursor', 'progress'); }).
-    ajaxStop  (function () { $(this).css ('cursor', null);       });
-
-  $('<div id="loading-indicator">Loading...</div>').
-    css ({
-      'position':    'absolute',
-      'top':         0,
-      'right':       0,
-      'background':  'yellow',
-      'color':       'black',
-      'font-weight': 'bold'
-    }).
-    hide ().
-    prependTo ($('body')).
-    ajaxStart (function () { $(this).show (); }).
-    ajaxStop  (function () { $(this).hide (); });
-});
-
-// The scraping.
-
 function get_wikipedia_page (title, callback) {
   var uri = 'http://en.wikipedia.org/w/api.php?action=parse&page=' +
             title + '&prop=text&format=json&callback=?';
