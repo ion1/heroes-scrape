@@ -299,7 +299,7 @@ function scrape_episodes (tree) {
         add_item (type, id, title, date, { wp_uri: wp_uri });
 
       } catch (e) {
-        if (console && console.error) { console.error (e); }
+        if (window.console && console.error) { console.error (e); }
       }
     });
   });
