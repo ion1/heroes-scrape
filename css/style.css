@@ -76,5 +76,5 @@ img.icon { width: 22px; height: 22px; vertical-align: middle; border: none; }
 
 .nobr  { white-space: nowrap; }
 .small { font-size: 85%; color: #777; }
-.notice { font-weight: bold; color: maroon; }
+.important { font-weight: bold; color: maroon; }
 
