@@ -17,7 +17,7 @@
 (function ($) {
 
 function debug (text) {
-  $('<div/>').prependTo ($('#content')).text (text);
+  $('<div/>').prependTo ('#content').text (text);
 }
 
 function ce (name) {
@@ -131,11 +131,11 @@ function generate_table () {
 
   $('<tr/>').
     appendTo (thead).
-    append ($('<th class="date">Date</th>')).
-    append ($('<th class="type">Type</th>')).
-    append ($('<th class="id">ID</th>')).
-    append ($('<th class="title">Title</th>')).
-    append ($('<th class="misc"> </th>'));
+    append ('<th class="date">Date</th>').
+    append ('<th class="type">Type</th>').
+    append ('<th class="id">ID</th>').
+    append ('<th class="title">Title</th>').
+    append ('<th class="misc"> </th>');
 
   // Generate the table in chunks to avoid hogging the browser for seconds.
 
@@ -348,7 +348,7 @@ $(function () {
   $('#heroes-table-container').
     empty ().
     append (table).
-    append ($('<div id="heroes-table-loading">Loading...</div>'));
+    append ('<div id="heroes-table-loading">Loading...</div>');
 
   if (table_ready) { $('#heroes-table-loading').remove (); }
 });
