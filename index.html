@@ -28,6 +28,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <script type="text/javascript" src="http://heh.fi/jquery/jquery.extservice.min.js"></script>
   <script type="text/javascript">
     $(function () {
+      $('#digg-container').loadDigg ({
+        url:      'http://heh.fi/heroes/',
+        title:    'The order of Heroes episodes and graphic novels',
+        bodytext: 'Watch and read them in the correct order easily.',
+        topic:    'television',
+        bgcolor:  'white'
+      });
+
       $('#disqus-container').loadDisqus ('heroes', { url: 'http://heh.fi/heroes/' });
     });
   </script>
@@ -58,6 +66,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             <li><a href="http://en.wikipedia.org/wiki/List_of_Heroes_graphic_novels">Graphic novels</a> at Wikipedia</a></li>
           </ul>
         </div>
+        <div id="digg-container"></div>
         <div id="symbol"></div>
       </div>
     </div>

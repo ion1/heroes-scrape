@@ -65,6 +65,8 @@ img.icon { width: 22px; height: 22px; vertical-align: middle; border: none; }
   -webkit-border-radius: 1em;
 }
 
+#digg-container { text-align: center; padding: 2em 0; }
+
 @media screen {
   #symbol {
     height: 940px;
