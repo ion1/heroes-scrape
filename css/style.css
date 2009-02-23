@@ -44,7 +44,7 @@ tr.upcoming {
   filter: alpha(opacity=33);
 }
 tr.today {
-  color: #a00;
+  color: maroon;
   font-weight: bold;
 }
 
