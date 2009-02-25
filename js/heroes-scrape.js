@@ -22,7 +22,7 @@ if (window.console && typeof window.console.error === 'function') {
 }
 
 function debug (text) {
-  $('<div/>').prependTo ('#content').text (text);
+  if (CONSOLE) { CONSOLE.debug (text); }
 }
 
 function ce (name) {
