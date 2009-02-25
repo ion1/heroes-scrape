@@ -16,6 +16,11 @@
 /*global jQuery*/
 (function ($) {
 
+var CONSOLE;
+if (window.console && typeof window.console.error === 'function') {
+  CONSOLE = window.console;
+}
+
 function debug (text) {
   $('<div/>').prependTo ('#content').text (text);
 }
@@ -299,7 +304,7 @@ function scrape_episodes (tree) {
         add_item (type, id, title, date, { wp_uri: wp_uri });
 
       } catch (e) {
-        if (window.console && console.error) { console.error (e); }
+        if (CONSOLE) { CONSOLE.error (e); }
       }
     });
   });
@@ -333,7 +338,7 @@ function scrape_comics (tree) {
       add_item ('comic', id, title, date, { uri: uri });
 
     } catch (e) {
-      if (console && console.error) { console.error (e); }
+      if (CONSOLE) { CONSOLE.error (e); }
     }
   });
 
