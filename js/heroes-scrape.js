@@ -72,7 +72,9 @@ function add_item (type, id, title, date, other) {
       typeof title   !== 'string' ||
       typeof date    !== 'string' ||
       ! /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.exec (date)) {
-    throw new HeroesScrapeError ('add_item: Invalid parameters');
+    var msg = 'add_item: Invalid parameters (type: ' + type +
+              ', id: ' + id + ', title: ' + title + ', date: ' + date;
+    throw new HeroesScrapeError (msg);
   }
 
   var item = {
@@ -243,7 +245,7 @@ function scrape_episodes_season_table () {
 
   var season = + heading_match[1];
 
-  var ep_col = $('tr:eq(0) th:contains("#")', this).index ();
+  var ep_col = $('tr:first th:contains("#")', this).index ();
 
   // The first episode of a season.
   var first_ep = null;
@@ -262,9 +264,13 @@ function scrape_episodes_season_table () {
 
     var ep_real = 1 + ep - first_ep,
         id      = '' + season + 'x' + pad (ep_real, 2),
-        title   = $('.summary', this).text (),
+        title   = cleanup_title ($('.summary', this).text ()),
         wp_uri  = $('.summary a[href]', this).attr ('href'),
         date    = $('.dtstart', this).text ();
+
+    if (title === '' || date === '') {
+      return;
+    }
 
     if (wp_uri) {
       wp_uri = 'http://en.wikipedia.org' + wp_uri;
@@ -287,7 +293,7 @@ function scrape_webisodes_table () {
   }
   var id_prefix = id_prefix_match.join ('').toLowerCase ();
 
-  var ep_col = $('tr:eq(0) th:contains("#")', this).index ();
+  var ep_col = $('tr:first th:contains("#")', this).index ();
 
   $('tr.vevent', this).each (function () {
     var ep = $('td', this).eq (ep_col).text ();
@@ -298,8 +304,12 @@ function scrape_webisodes_table () {
     ep = + ep_match[1];
 
     var id    = id_prefix + pad (ep, 2),
-        title = heading + ' \u2013 ' + $('.summary', this).text (),
+        title = heading + ' \u2013 ' + cleanup_title ($('.summary', this).text ()),
         date  = $('.dtstart', this).text ();
+
+    if (title === '' || date === '') {
+      return;
+    }
 
     try {
       add_item ('webisode', id, title, date);
@@ -340,6 +350,10 @@ function scrape_comics (tree) {
 
   scraped_comics = true;
   generate_table ();
+}
+
+function cleanup_title (str) {
+  return str.replace (/^"(.+)"(?:\[\w+\])?$/, '$1');
 }
 
 get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
