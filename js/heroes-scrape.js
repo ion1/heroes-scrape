@@ -60,7 +60,7 @@ function get_wikipedia_page (title, callback) {
     var content = data.parse.text['*'].
                   replace (/<(?:embed|iframe|img|input|object)[^>]*>/gi, '');
     var tree = $('<div/>').html (content)[0];
-    callback (tree);
+    callback.call (tree);
   });
 }
 
@@ -211,9 +211,9 @@ function generate_table () {
   }, 1);
 }
 
-function scrape_episodes (tree) {
+function scrape_episodes () {
   try {
-    $('h2:contains("Main series")', tree).
+    $('h2:contains("Main series")', this).
     nextUntil ('h2').
     filter ('.wikitable').
     each (scrape_episodes_season_table);
@@ -222,7 +222,7 @@ function scrape_episodes (tree) {
   }
 
   try {
-    $('h2:contains("Web-based spin-offs")', tree).
+    $('h2:contains("Web-based spin-offs")', this).
     nextUntil ('h2').
     filter ('.wikitable').
     each (scrape_webisodes_table);
@@ -317,10 +317,10 @@ function scrape_webisodes_table () {
   });
 }
 
-function scrape_comics (tree) {
+function scrape_comics () {
   var bonus = 0;
 
-  $(tree).find ('.wikitable').each (function () {
+  $('.wikitable', this).each (function () {
       var issue_col = $('tr:first th:contains("Issue")', this).index (),
           title_col = $('tr:first th:contains("Title")', this).index (),
           date_col  = $('tr:first th:contains("Release date")', this).index ();
