@@ -25,10 +25,6 @@ function debug (text) {
   if (CONSOLE) { CONSOLE.debug (text); }
 }
 
-function ce (name) {
-  return $(document.createElement (name));
-}
-
 function HeroesScrapeError (message) {
   this.name = 'HeroesScrapeError';
   this.message = message;
@@ -156,7 +152,7 @@ function generate_table () {
         return;
       }
 
-      var tr = ce ('tr').appendTo (tbody);
+      var tr = $('<tr/>').appendTo (tbody);
 
       if (item.date === today) {
         tr.addClass ('today');
@@ -166,15 +162,15 @@ function generate_table () {
 
       tr.addClass (item.type);
 
-      var td_date  = ce ('td').addClass ('date').appendTo (tr),
-          td_type  = ce ('td').addClass ('type').appendTo (tr),
-          td_id    = ce ('td').addClass ('id').appendTo (tr),
-          td_title = ce ('td').addClass ('title').appendTo (tr),
-          td_misc  = ce ('td').addClass ('misc').appendTo (tr);
+      var td_date  = $('<td/>').addClass ('date').appendTo (tr),
+          td_type  = $('<td/>').addClass ('type').appendTo (tr),
+          td_id    = $('<td/>').addClass ('id').appendTo (tr),
+          td_title = $('<td/>').addClass ('title').appendTo (tr),
+          td_misc  = $('<td/>').addClass ('misc').appendTo (tr);
 
       td_date.text (item.date);
 
-      ce ('img').
+      $('<img/>').
         attr ({
           'src':   'img/' + item.type + '.png',
           'alt':   item.type,
@@ -186,7 +182,7 @@ function generate_table () {
       td_id.text (item.id);
 
       if (item.uri) {
-        ce ('a').
+        $('<a/>').
           text (item.title).
           attr ('href', item.uri).
           appendTo (td_title);
@@ -196,10 +192,10 @@ function generate_table () {
       }
 
       if (item.wp_uri) {
-        ce ('a').
+        $('<a/>').
           attr ('href', item.wp_uri).
           append (
-            ce ('img').
+            $('<img/>').
               attr ({
                 'src':   'img/wikipedia.png',
                 'alt':   'Wikipedia',
