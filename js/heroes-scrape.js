@@ -16,6 +16,24 @@
 /*global jQuery*/
 (function ($) {
 
+var scraped_episodes = false,
+    scraped_comics   = false,
+    table            = $('<table id="heroes-table"/>'),
+    table_ready      = false,
+    list             = [];
+
+get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
+get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
+
+$(function () {
+  $('#heroes-table-container').
+    empty ().
+    append (table).
+    append ('<div id="heroes-table-loading">Loading...</div>');
+
+  if (table_ready) { $('#heroes-table-loading').remove (); }
+});
+
 var CONSOLE;
 if (window.console && typeof window.console.error === 'function') {
   CONSOLE = window.console;
@@ -45,12 +63,6 @@ function get_wikipedia_page (title, callback) {
     callback (tree);
   });
 }
-
-var scraped_episodes = false,
-    scraped_comics   = false,
-    table            = $('<table id="heroes-table"/>'),
-    table_ready      = false,
-    list             = [];
 
 function add_item (type, id, title, date, other) {
   if (! /^(?:episode|webisode|comic)$/.exec (type) ||
@@ -362,18 +374,6 @@ function pad (num, len) {
 
   return res;
 }
-
-get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
-get_wikipedia_page ('List_of_Heroes_graphic_novels', scrape_comics);
-
-$(function () {
-  $('#heroes-table-container').
-    empty ().
-    append (table).
-    append ('<div id="heroes-table-loading">Loading...</div>');
-
-  if (table_ready) { $('#heroes-table-loading').remove (); }
-});
 
 }) (jQuery);
 
