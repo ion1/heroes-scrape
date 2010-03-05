@@ -211,106 +211,102 @@ function generate_table () {
   }, 1);
 }
 
-var month_map = {
-  january:    1,
-  february:   2,
-  march:      3,
-  april:      4,
-  may:        5,
-  june:       6,
-  july:       7,
-  august:     8,
-  september:  9,
-  october:   10,
-  november:  11,
-  december:  12
-};
-
-function parse_date (string) {
-  var m = /^(\S+) ([0-9]+), ([0-9]+)/.exec (string);
-
-  if (! m || ! month_map[m[1].toLowerCase ()]) {
-    throw new HeroesScrapeError ('parse_date: Invalid parameters');
+function scrape_episodes (tree) {
+  try {
+    $('h2:contains("Main series")', tree).
+    nextUntil ('h2').
+    filter ('.wikitable').
+    each (scrape_episodes_season_table);
+  } catch (e) {
+    if (CONSOLE) { CONSOLE.error (e); }
   }
 
-  var year  = + m[3],
-      month = month_map[m[1].toLowerCase ()],
-      day   = + m[2];
-
-  return pad (year, 4) + '-' + pad (month, 2) + '-' + pad (day, 2);
-}
-
-var webisode_id_map = {
-  'Going Postal':    'gp',
-  'Heroes: Destiny': 'hd',
-  'The Recruit':     'tr',
-  'Hard Knox':       'hk'
-};
-
-var webisode_re = /^(?:Going Postal|Heroes: Destiny|The Recruit|Hard Knox)$/;
-
-function scrape_episodes (tree) {
-  $(tree).find ('h3').each (function () {
-    var text = $(this).find ('.mw-headline').text ();
-
-    var type,
-        id_prefix,
-        title_prefix,
-        date_col;
-
-    var match = /^Season ([0-9]+)/.exec (text);
-    if (match) {
-      type         = 'episode';
-      id_prefix    = match[1] + 'x';
-      title_prefix = '';
-      date_col     = 5;
-
-    } else if (webisode_id_map[text]) {
-      type         = 'webisode';
-      id_prefix    = webisode_id_map[text];
-      title_prefix = text + ' \u2013 ';
-      date_col     = 4;
-
-    } else {
-      return;
-    }
-
-    // The first episode of a season.
-    var first_ep = null;
-
-    $(this).next ('table.wikitable').find ('tr').each (function () {
-      var ep = $(this).find ('td:eq(0)').text ();
-
-      if (! /^[0-9]+$/.exec (ep)) {
-        return;
-      }
-
-      ep = + ep;
-      if (first_ep === null) {
-        first_ep = ep;
-      }
-
-      try {
-        var ep_real = 1 + ep - first_ep,
-            id      = id_prefix + pad (ep_real, 2),
-            title   = title_prefix + $(this).find ('td:eq(1) b').text (),
-            wp_uri  = $(this).find ('td:eq(1) b a').attr ('href'),
-            date    = parse_date ($(this).find ('td:eq('+date_col+')').text ());
-
-        if (wp_uri) {
-          wp_uri = 'http://en.wikipedia.org' + wp_uri;
-        }
-
-        add_item (type, id, title, date, { wp_uri: wp_uri });
-
-      } catch (e) {
-        if (CONSOLE) { CONSOLE.error (e); }
-      }
-    });
-  });
+  try {
+    $('h2:contains("Web-based spin-offs")', tree).
+    nextUntil ('h2').
+    filter ('.wikitable').
+    each (scrape_webisodes_table);
+  } catch (e) {
+    if (CONSOLE) { CONSOLE.error (e); }
+  }
 
   scraped_episodes = true;
   generate_table ();
+}
+
+function scrape_episodes_season_table () {
+  var heading = $(this).prevAll ('h3').first ().find ('.mw-headline').text ();
+  var heading_match = heading.match (/^Season ([0-9]+)/);
+  if (! heading_match) {
+    return;
+  }
+
+  var season = + heading_match[1];
+
+  var ep_col = $('tr:eq(0) th:contains("#")', this).index ();
+
+  // The first episode of a season.
+  var first_ep = null;
+
+  $('tr.vevent', this).each (function () {
+    var ep = $('td', this).eq (ep_col).text ();
+    var ep_match = ep.match (/^([0-9]+)/);
+    if (! ep_match) {
+      return;
+    }
+    ep = + ep_match[1];
+
+    if (first_ep === null) {
+      first_ep = ep;
+    }
+
+    var ep_real = 1 + ep - first_ep,
+        id      = '' + season + 'x' + pad (ep_real, 2),
+        title   = $('.summary', this).text (),
+        wp_uri  = $('.summary a[href]', this).attr ('href'),
+        date    = $('.dtstart', this).text ();
+
+    if (wp_uri) {
+      wp_uri = 'http://en.wikipedia.org' + wp_uri;
+    }
+
+    try {
+      add_item ('episode', id, title, date, { wp_uri: wp_uri });
+    } catch (e) {
+      if (CONSOLE) { CONSOLE.error (e); }
+    }
+  });
+}
+
+function scrape_webisodes_table () {
+  var heading = $(this).prevAll ('h3').first ().find ('.mw-headline').text ();
+
+  var id_prefix_match = heading.match (/\b(\w)/g);
+  if (! id_prefix_match) {
+    return;
+  }
+  var id_prefix = id_prefix_match.join ('').toLowerCase ();
+
+  var ep_col = $('tr:eq(0) th:contains("#")', this).index ();
+
+  $('tr.vevent', this).each (function () {
+    var ep = $('td', this).eq (ep_col).text ();
+    var ep_match = /^([0-9]+)/.exec (ep);
+    if (! ep_match) {
+      return;
+    }
+    ep = + ep_match[1];
+
+    var id    = id_prefix + pad (ep, 2),
+        title = heading + ' \u2013 ' + $('.summary', this).text (),
+        date  = $('.dtstart', this).text ();
+
+    try {
+      add_item ('webisode', id, title, date);
+    } catch (e) {
+      if (CONSOLE) { CONSOLE.error (e); }
+    }
+  });
 }
 
 function scrape_comics (tree) {
