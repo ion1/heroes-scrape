@@ -322,30 +322,41 @@ function scrape_webisodes_table () {
 function scrape_comics (tree) {
   var bonus = 0;
 
-  $(tree).find ('table.wikitable tr').each (function () {
-    var id = $(this).find ('td:eq(0)').text ();
+  $(tree).find ('.wikitable').each (function () {
+      var issue_col = $('tr:first th:contains("Issue")', this).index (),
+          title_col = $('tr:first th:contains("Title")', this).index (),
+          date_col  = $('tr:first th:contains("Release date")', this).index ();
 
-    if (/^[0-9]+$/.exec (id)) {
-      // Proceed.
+      $('tr', this).each (function () {
+        var issue = $('td', this).eq (issue_col).text ();
+        var issue_match = issue.match (/^([0-9]+)/);
+        var id;
+        if (issue_match) {
+          id = issue_match[1];
 
-    } else if (/^(?:Bonus|Interactive Novel)/.exec (id)) {
-      bonus++;
-      id = 'b' + bonus;
+        } else if (issue.match (/^(?:Bonus|Interactive Novel)/)) {
+          bonus++;
+          id = 'b' + bonus;
 
-    } else {
-      return;
-    }
+        } else {
+          return;
+        }
 
-    var title = $(this).find ('td:eq(1) a:first').text (),
-        uri   = $(this).find ('td:eq(1) a:first').attr ('href'),
-        date  = $(this).find ('td:eq(2)').text ();
+        var title_a = $('td', this).eq (title_col).find ('a[href]:first'),
+            title   = cleanup_title (title_a.text ()),
+            uri     = title_a.attr ('href'),
+            date    = $('td', this).eq (date_col).text ();
 
-    try {
-      add_item ('comic', id, title, date, { uri: uri });
+        if (title === '' || date === '') {
+          return;
+        }
 
-    } catch (e) {
-      if (CONSOLE) { CONSOLE.error (e); }
-    }
+        try {
+          add_item ('comic', id, title, date, { uri: uri });
+        } catch (e) {
+          if (CONSOLE) { CONSOLE.error (e); }
+        }
+      });
   });
 
   scraped_comics = true;
