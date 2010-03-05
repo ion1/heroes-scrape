@@ -22,15 +22,21 @@ ifndef YUICOMPRESSOR
 $(error YUICOMPRESSOR not defined)
 endif
 
-compress     := java -jar "$(YUICOMPRESSOR)"
+ifndef CLOSURECOMPILER
+$(error CLOSURECOMPILER not defined)
+endif
+
+compress_css := java -jar "$(YUICOMPRESSOR)"
+compress_js  := java -jar "$(CLOSURECOMPILER)" \
+                     --warning_level VERBOSE --summary_detail_level 3
 
 all : $(targets_js) $(targets_css)
 
 %.min.js : %.js
-	$(compress) -o "$@" "$<"
+	$(compress_js) --js_output_file "$@" --js "$<"
 
 %.min.css : %.css
-	$(compress) -o "$@" "$<"
+	$(compress_css) -o "$@" "$<"
 
 .PHONY : clean
 clean ::

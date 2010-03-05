@@ -43,6 +43,7 @@ function debug (text) {
   if (CONSOLE) { CONSOLE.debug (text); }
 }
 
+/** @constructor */
 function HeroesScrapeError (message) {
   this.name = 'HeroesScrapeError';
   this.message = message;
@@ -64,6 +65,7 @@ function get_wikipedia_page (title, callback) {
   });
 }
 
+/** @param {Object=} other */
 function add_item (type, id, title, date, other) {
   if (! /^(?:episode|webisode|comic)$/.exec (type) ||
       typeof id      !== 'string' ||
@@ -375,6 +377,6 @@ function pad (num, len) {
   return res;
 }
 
-}) (jQuery);
+}) (window.jQuery);
 
 // vim:set et sw=2 sts=2:
