@@ -34,16 +34,6 @@ HeroesScrapeError.prototype.toString = function () {
   return this.name + ': ' + this.message;
 };
 
-function pad (num, len) {
-  var res = '' + num;
-
-  while (res.length < len) {
-    res = '0' + res;
-  }
-
-  return res;
-}
-
 function get_wikipedia_page (title, callback) {
   var uri = 'http://en.wikipedia.org/w/api.php?action=parse&page=' +
             title + '&prop=text&format=json&callback=?';
@@ -361,6 +351,16 @@ function scrape_comics (tree) {
 
 function cleanup_title (str) {
   return str.replace (/^"(.+)"(?:\[\w+\])?$/, '$1');
+}
+
+function pad (num, len) {
+  var res = '' + num;
+
+  while (res.length < len) {
+    res = '0' + res;
+  }
+
+  return res;
 }
 
 get_wikipedia_page ('List_of_Heroes_episodes',       scrape_episodes);
